@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--1.注解驱动-->
+    <mvc:annotation-driven />
+    <!--2.静态资源过滤(使用default的Servlet对象处理访问静态资源的请求)-->
+    <mvc:default-servlet-handler />
+    <!--3.扫描包:controller-->
+    <context:component-scan base-package="com.bjpowernode.settings.web.controller" />
+    <context:component-scan base-package="com.bjpowernode.workbench.web.controller" />
+
+    <!--4.视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/view/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!--配置文件解析器对象(文件上传与下载)-->
+    <bean id="commonsMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10485760" />
+    </bean>
+
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--定义拦截的地址-->
+            <mvc:mapping path="/**"/>
+            <bean class="com.bjpowernode.web.filter.LoginInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--处理异常需要的两步-->
+    <context:component-scan base-package="com.bjpowernode.handler" />
+    <mvc:annotation-driven />
+
+    <!--&lt;!&ndash;注册类型转换器(前端向控制器传入数据的格式问题)&ndash;&gt;
+    <bean id="myDateConverter" class="com.bjpowernode.handlers.MyDateConverter" />
+    &lt;!&ndash;注册转换服务对象&ndash;&gt;
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <ref bean="myDateConverter" />
+            </set>
+        </property>
+    </bean>
+    &lt;!&ndash;注册mvc注解驱动&ndash;&gt;
+    <mvc:annotation-driven conversion-service="conversionService" />-->
+
+    <!--声明验证器对象(前后端验证信息用的)
+    <bean id="myValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+    </bean>
+    &lt;!&ndash;注册mvc注解驱动&ndash;&gt;
+    <mvc:annotation-driven validator="myValidator" />-->
+</beans>
